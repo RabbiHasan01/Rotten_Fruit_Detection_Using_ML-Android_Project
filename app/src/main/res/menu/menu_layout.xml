@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item
+        android:id="@+id/reviewId"
+        android:title="Rating us"
+        app:showAsAction="never"
+
+        />
+    <item
+        android:id="@+id/aboutusId"
+        android:title="About us"
+        app:showAsAction="never"
+
+        />
+    <item
+        android:id="@+id/likeId"
+        android:title="Like"
+        app:showAsAction="never"
+
+        />
+    <item
+        android:id="@+id/blogId"
+        android:title="blog"
+        app:showAsAction="never"
+
+        />
+    <item
+        android:id="@+id/logoutId"
+        android:title="Logout"
+        app:showAsAction="never"
+
+        />
+</menu>

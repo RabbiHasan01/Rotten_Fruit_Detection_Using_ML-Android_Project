@@ -1,0 +1,52 @@
+<resources>
+    <string name="app_name">Fruit Detection</string>
+
+    <string name="date_time">Date and Time</string>
+
+    <!--Card Pagination01-->
+    <string name="page_1">Fruit cultivation has been a traditional part of the agricultural practices in Bangladesh.
+There has been a revolution in fruit farming. From fruits we get nutrition. It is a source of vitamins and minerals. Sometimes fruits are rotten in the consumer end also the packing end.so, to avoid these rotten fruits we came up with this research work.
+    </string>
+
+    <string name="page_2"> In the recent advancements of computer vision and deep learning our approach is to recognize whether a
+fruit is fresh or rotten. Now the whole lot have become smart and generation dependent.
+We can see the usage of AI and gadget learning everywhere.</string>
+
+    <string name="page_3">Following this, I constructed right here a device. A device this is smart, fast and that device can perceive fresh and rotten
+fruits. I use machine learning to classifying the rotten fruit and fresh fruit. </string>
+
+    <string name="page_4">This device can perceive the share of rotten and freshness of fruit by the use of photograph
+data. This device could make our paintings easy with massive farm and juice
+manufacturing unit to perceive rotted fruit.</string>
+
+    <string name="page_5">This device could make our paintings easy with massive farm and juice manufacturing unit to perceive rotted fruit. We wish that it is going to make our paintings extra correct in much less time.</string>
+
+    <string-array name="division_options">
+        <item>Dhaka</item>
+        <item>Chittagong</item>
+        <item>Rajshahi</item>
+        <item>Khulna</item>
+        <item>Barisal</item>
+        <item>Sylhet</item>
+        <item>Rangpur</item>
+        <item>Mymensingh</item>
+    </string-array>
+
+    <string-array name="district_options">
+        <item>Dhaka</item>
+        <item>Chittagong</item>
+        <item>Rajshahi</item>
+        <item>Khulna</item>
+        <item>Barisal</item>
+        <item>Sylhet</item>
+        <item>Rangpur</item>
+        <item>Mymensingh</item>
+    </string-array>
+
+    <string-array name="phone_options">
+        <item>Yes</item>
+        <item>No</item>
+    </string-array>
+
+
+</resources>

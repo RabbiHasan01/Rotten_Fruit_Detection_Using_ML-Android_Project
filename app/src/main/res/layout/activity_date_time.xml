@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="@color/white"
+    android:gravity="center"
+    tools:context=".Date_Time">
+
+    <TimePicker
+        android:id="@+id/timePickerId"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:background="@color/white"/>
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:textSize="20dp"
+        android:text="Current Date"
+        android:id="@+id/dateButtonId"
+        app:backgroundTint="@color/teal_200"
+        android:textAllCaps="false"
+        android:layout_margin="15dp"
+
+        />
+
+    <TextView
+        android:id="@+id/textId"
+        android:layout_margin="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:textColor="@color/appBarColor"
+        />
+    <!--
+    <TextView
+        android:id="@+id/textId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Current Date"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:layout_margin="15dp"
+        />
+    <Button
+        android:layout_margin="15dp"
+        android:id="@+id/buttonId"
+        android:textAllCaps="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Date"
+        android:textStyle="bold"
+        android:textSize="20dp"
+
+        />
+
+    <LinearLayout
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+
+        <TimePicker
+            android:id="@+id/timePickerId"
+            android:layout_width="match_parent"
+            android:layout_height="332dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+
+        android:layout_height="0dp">
+
+        <TextView
+            android:id="@+id/textId"
+            android:layout_margin="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:text="Current Date"
+            android:id="@+id/dateButtonId"
+            android:layout_margin="15dp"
+            />
+
+    </LinearLayout>
+
+    -->
+
+</LinearLayout>
