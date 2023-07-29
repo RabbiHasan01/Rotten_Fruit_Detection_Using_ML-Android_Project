@@ -4,7 +4,11 @@ public class User {
     private String name;
     private String username;
     private String email;
-    private String age;
+
+    private String birthdate;
+    private String division;
+    private String district;
+    private String phone;
     private String gender;
     //private String imageUrl;
 
@@ -13,11 +17,14 @@ public class User {
     }
 
     // Constructor
-    public User(String name, String username, String email, String age, String gender) {
+    public User(String name, String username, String email, String birthdate, String division,String district, String phone, String gender) {
         this.name = name;
         this.username = username;
         this.email = email;
-        this.age = age;
+        this.birthdate=birthdate;
+        this.division=division;
+        this.district=district;
+        this.phone = phone;
         this.gender = gender;
         //this.imageUrl = imageUrl;
     }
@@ -48,12 +55,30 @@ public class User {
         this.email = email;
     }
 
-    public String getAge() {
-        return age;
+    public String getBirthdate() {return birthdate;}
+
+    public void setBirthdate(String birthdate) {
+        this.birthdate = birthdate;
     }
 
-    public void setAge(String age) {
-        this.age = age;
+    public String getDivision() {return division;}
+
+    public void setDivision(String division) {
+        this.division = division;
+    }
+
+    public String getDistrict() {return district;}
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getGender() {

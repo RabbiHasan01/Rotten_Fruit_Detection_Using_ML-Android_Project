@@ -105,7 +105,7 @@ public class LogIn extends AppCompatActivity implements View.OnClickListener {
                                 startActivity(intent);
                                 signInProgressBar.setVisibility(View.GONE);
                             }else{
-                                Toast.makeText(LogIn.this, "Please verify your email address.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LogIn.this, "Enter logged-in email address.", Toast.LENGTH_SHORT).show();
                                 signInProgressBar.setVisibility(View.GONE);
                             }
 

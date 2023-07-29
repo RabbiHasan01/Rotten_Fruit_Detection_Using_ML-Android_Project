@@ -11,9 +11,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.GridLayout;
-import android.widget.Toast;
-
-import com.google.firebase.auth.FirebaseAuth;
 
 public class AppFeatures extends AppCompatActivity {
 
@@ -105,9 +102,15 @@ public class AppFeatures extends AppCompatActivity {
             startActivity(intent);
             return true;
         }
+        if(item.getItemId()==R.id.restApiId){
+            /* Toast.makeText(this, "About us is selected.", Toast.LENGTH_SHORT).show();*/
+            Intent intent=new Intent(this, Rest_Api.class);
+            startActivity(intent);
+            return true;
+        }
         if(item.getItemId()==R.id.likeId){
             /* Toast.makeText(this, "About us is selected.", Toast.LENGTH_SHORT).show();*/
-            Intent intent=new Intent(this, Like.class);
+            Intent intent=new Intent(this, Likes.class);
             startActivity(intent);
             return true;
         }

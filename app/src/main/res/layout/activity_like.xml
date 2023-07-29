@@ -3,31 +3,39 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     android:padding="16dp"
-    tools:context=".Like">
-
-    <!--<ImageButton
-        android:id="@+id/likeButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/selector_like_button"
-        android:padding="8dp"
-        android:layout_centerInParent="true"/> -->
-
-    <Button
-        android:id="@+id/likeButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Like"/>
-        <!--android:layout_centerInParent="true" -->
+    tools:context=".Likes">
 
     <TextView
-        android:id="@+id/totalLikesTextView"
+        android:id="@+id/questionTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0"
-        android:textSize="20dp"
-        android:layout_marginStart="16dp" />
+        android:text="Are you like this app?"
+        android:textSize="20sp"
+        android:layout_marginBottom="16dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/likeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            app:backgroundTint="@color/appBarColor"
+            android:text="Like" />
+
+        <TextView
+            android:id="@+id/totalLikesTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textSize="20dp"
+            android:layout_marginStart="16dp" />
+    </LinearLayout>
 
 </LinearLayout>

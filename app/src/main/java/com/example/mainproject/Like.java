@@ -1,116 +1,44 @@
 package com.example.mainproject;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class Like extends AppCompatActivity {
+public class Like {
 
-    private Button likeButton;
-    private TextView totalLikesTextView;
+    public static void likePost(String postId, FirebaseUser currentUser) {
+        DatabaseReference likesRef = FirebaseDatabase.getInstance().getReference("Likes");
+        likesRef.child(postId).child(currentUser.getUid()).setValue(true);
+    }
 
-    private DatabaseReference likesReference;
-    private DatabaseReference userLikesReference;
-    private FirebaseAuth mAuth;
+    public static void unlikePost(String postId, FirebaseUser currentUser) {
+        DatabaseReference likesRef = FirebaseDatabase.getInstance().getReference("Likes");
+        likesRef.child(postId).child(currentUser.getUid()).removeValue();
+    }
 
-    private int totalLikes = 0;
-    private boolean hasLiked = false;
-
-    @SuppressLint("MissingInflatedId")
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_like);
-
-        likeButton = findViewById(R.id.likeButton);
-        totalLikesTextView = findViewById(R.id.totalLikesTextView);
-
-        mAuth = FirebaseAuth.getInstance();
-        String userId = mAuth.getCurrentUser().getUid();
-
-        likesReference = FirebaseDatabase.getInstance().getReference().child("TotalLikes");
-        userLikesReference = FirebaseDatabase.getInstance().getReference().child("UserLikes").child(userId);
-
-        likeButton.setOnClickListener(new View.OnClickListener() {
+    public static void checkIfLiked(String postId, FirebaseUser currentUser, final OnLikeStatusListener listener) {
+        DatabaseReference likesRef = FirebaseDatabase.getInstance().getReference("Likes");
+        likesRef.child(postId).child(currentUser.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onClick(View v) {
-                if (hasLiked) {
-                    userLikesReference.setValue(false);
-                    likesReference.setValue(totalLikes - 1);
-                    totalLikes--;
-                } else {
-                    userLikesReference.setValue(true);
-                    likesReference.setValue(totalLikes + 1);
-                    totalLikes++;
-                }
-                hasLiked = !hasLiked;
-                updateLikeButtonState();
-            }
-        });
-
-        userLikesReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    hasLiked = snapshot.getValue(Boolean.class);
-                } else {
-                    hasLiked = false;
-                }
-                updateLikeButtonState();
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                boolean isLiked = dataSnapshot.exists();
+                listener.onLikeStatusReceived(isLiked);
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // Handle database error
-            }
-        });
-
-        likesReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    totalLikes = snapshot.getValue(Integer.class);
-                } else {
-                    totalLikes = 0;
-                }
-                updateLikesCount();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                // Handle database error
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                listener.onError();
             }
         });
     }
 
-    private void updateLikeButtonState() {
-        if (hasLiked) {
-            likeButton.setText("Unlike");
-        } else {
-            likeButton.setText("Like");
-        }
-    } /*
-    private void updateLikeButtonState() {
-        if (hasLiked) {
-            likeButton.setBackgroundResource(R.drawable.dislike_img);
-        } else {
-            likeButton.setBackgroundResource(R.drawable.like_img);
-        }
-    }*/
-
-
-    private void updateLikesCount() {
-        totalLikesTextView.setText(""+totalLikes);
+    public interface OnLikeStatusListener {
+        void onLikeStatusReceived(boolean isLiked);
+        void onError();
     }
 }

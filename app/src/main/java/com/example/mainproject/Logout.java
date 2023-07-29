@@ -29,6 +29,19 @@ public class Logout extends AppCompatActivity {
     }
 
     private void logout() {
+        // Sign out the user from FirebaseAuth
+        mAuth.signOut();
+
+        // Redirect the user to the login activity or any other desired destination
+        Intent intent = new Intent(Logout.this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
+    }
+}
+
+
+    /*private void logout() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
             String userId = currentUser.getUid();
@@ -46,4 +59,4 @@ public class Logout extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
-}
+}*/

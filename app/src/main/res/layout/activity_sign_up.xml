@@ -40,13 +40,13 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            app:cardElevation="4dp">
+            android:layout_margin="5dp"
+            app:cardCornerRadius="8dp">
 
             <EditText
                 android:id="@+id/signUpNameEditTextId"
-                android:textSize="20sp"
-                android:hint="Name"
+                android:textSize="16sp"
+                android:hint="Full Name"
                 android:textColor="@android:color/black"
                 app:backgroundTint="@color/appBarColor"
                 android:layout_width="match_parent"
@@ -58,12 +58,12 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            app:cardElevation="4dp">
+            android:layout_margin="5dp"
+            app:cardCornerRadius="8dp">
 
             <EditText
                 android:id="@+id/signUpUsernameEditTextId"
-                android:textSize="20sp"
+                android:textSize="16sp"
                 android:hint="Username"
                 android:textColor="@android:color/black"
                 app:backgroundTint="@color/appBarColor"
@@ -76,12 +76,12 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            app:cardElevation="4dp">
+            android:layout_margin="5dp"
+            app:cardCornerRadius="8dp">
 
             <EditText
                 android:id="@+id/signUpEmailEditTextId"
-                android:textSize="20sp"
+                android:textSize="16sp"
                 android:hint="Email"
                 android:textColor="@android:color/black"
                 app:backgroundTint="@color/appBarColor"
@@ -95,32 +95,101 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            app:cardElevation="4dp">
+            android:layout_margin="5dp"
+            app:cardCornerRadius="8dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/signUpBirthdateEditTextId"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Select Birthdate"
+                    android:textSize="16sp"
+                    app:backgroundTint="@color/appBarColor"
+                    />
 
                 <ImageButton
                     android:id="@+id/birthdatePickerButton"
                     android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_height="50dp"
                     android:background="@null"
                     android:contentDescription="Select Birthdate"
                     android:src="@drawable/ic_calendar" />
 
-                <EditText
-                    android:id="@+id/signUpBirthdateEditTextId"
-                    android:layout_width="290dp"
+            </LinearLayout>
+
+
+        </androidx.cardview.widget.CardView>
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            app:cardCornerRadius="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:gravity="left"
-                    android:hint="Select Birthdate"
-                    android:textSize="20sp"
-                    app:backgroundTint="@color/appBarColor" />
+                    android:layout_margin="8dp"
+                    app:cardCornerRadius="8dp">
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
 
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:hint="Division:" />
+
+                        <Spinner
+                            android:id="@+id/signUpSpinnerDivision"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:backgroundTint="@color/appBarColor" />
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    app:cardCornerRadius="8dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:hint="District:" />
+
+                        <Spinner
+                            android:id="@+id/signUpSpinnerDistrict"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:backgroundTint="@color/appBarColor" />
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
 
             </LinearLayout>
 
@@ -139,16 +208,16 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            app:cardElevation="4dp">
+            android:layout_margin="5dp"
+            app:cardCornerRadius="8dp">
 
             <EditText
-                android:id="@+id/signUpAgeEditTextId"
-                android:textSize="20sp"
+                android:id="@+id/signUpPhoneEditTextId"
+                android:textSize="16sp"
                 android:textColor="@android:color/black"
                 app:backgroundTint="@color/appBarColor"
-                android:inputType="textEmailAddress"
-                android:hint="Age"
+                android:inputType="numberDecimal"
+                android:hint="Phone Number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="10dp"/>
@@ -158,30 +227,31 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            app:cardElevation="4dp">
+            android:layout_margin="5dp"
+            app:cardCornerRadius="8dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <Spinner
-                    android:id="@+id/spinnerId"
-                    app:backgroundTint="@color/appBarColor"
-                    android:layout_width="60dp"
-                    android:layout_height="50dp"
-                    android:gravity="center"
-                    />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
 
                 <EditText
                     android:id="@+id/signUpGenderEditTextId"
-                    android:layout_width="290dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
                     android:gravity="left"
                     android:hint="Select Gender"
-                    android:textSize="20sp"
+                    android:textSize="16sp"
                     app:backgroundTint="@color/appBarColor" />
+
+                <Spinner
+                    android:id="@+id/spinnerId"
+                    android:layout_width="60dp"
+                    android:layout_height="50dp"
+                    app:backgroundTint="@color/appBarColor" />
+
 
             </LinearLayout>
 
@@ -190,13 +260,13 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            app:cardElevation="4dp">
+            android:layout_margin="5dp"
+            app:cardCornerRadius="8dp">
 
             <EditText
                 android:id="@+id/signUpPasswordEditTextId"
                 android:inputType="textPassword"
-                android:textSize="20sp"
+                android:textSize="16sp"
                 android:hint="Password"
                 android:textColor="@android:color/black"
                 app:backgroundTint="@color/appBarColor"
@@ -209,13 +279,13 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            app:cardElevation="4dp">
+            android:layout_margin="5dp"
+            app:cardCornerRadius="8dp">
 
             <EditText
                 android:id="@+id/signUpConfirmPasswordEditTextId"
                 android:inputType="textPassword"
-                android:textSize="20sp"
+                android:textSize="16sp"
                 android:hint="Confirm password"
                 android:textColor="@android:color/black"
                 app:backgroundTint="@color/appBarColor"
@@ -228,8 +298,8 @@
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            app:cardElevation="4dp">
+            android:layout_margin="5dp"
+            app:cardCornerRadius="8dp">
 
             <Button
                 android:text="Sign Up"
@@ -240,7 +310,7 @@
                 android:id="@+id/signUpButtonId"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="10dp"/>
+                />
 
         </androidx.cardview.widget.CardView>
 

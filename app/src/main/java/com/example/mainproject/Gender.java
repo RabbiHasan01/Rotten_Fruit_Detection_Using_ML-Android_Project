@@ -1,10 +1,10 @@
 package com.example.mainproject;
 
-public class Members {
+public class Gender {
 
     private String spinner;
 
-    public Members(){}
+    public Gender(){}
 
     public String getSpinner() {
         return spinner;

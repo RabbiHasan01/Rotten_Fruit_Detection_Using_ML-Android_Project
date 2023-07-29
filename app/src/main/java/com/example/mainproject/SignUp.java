@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -13,7 +14,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -30,22 +33,27 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class SignUp extends AppCompatActivity implements View.OnClickListener {
 
     private FirebaseAuth mAuth;
-    private EditText signUpName,signUpUsername,signUpEmail,signUpAge,signUpGender,signUpPassword,signUpConfirmPassword;
+    private EditText signUpName,signUpUsername,signUpEmail,signUpBirthdate,signUpPhone,signUpGender,signUpPassword,signUpConfirmPassword;
     private Button signUp;
     private ProgressBar signUpProgressBar;
     private RadioGroup radioGroup;
+
+    private ImageButton birthdatePicker;
     private Spinner genderSpinner;
     private Spinner divisionSpinner;
     private Spinner districtSpinner;
+    private AddressMap addressMap;
+
 
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference reference;
-    Members members;
+    Gender gender;
     Boolean flag;
 
 
@@ -65,12 +73,15 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
         signUpUsername = findViewById(R.id.signUpUsernameEditTextId);
         signUpEmail = findViewById(R.id.signUpEmailEditTextId);
         /*signUpPhone = findViewById(R.id.signUpPhoneEditTextId);
-        signUpAddress = findViewById(R.id.signUpAddressEditTextId);
-        signUpBirthdate = findViewById(R.id.signUpBirthdateEditTextId);
-        divisionSpinner = findViewById(R.id.divisionSpinnerId);
-        districtSpinner = findViewById(R.id.districtSpinnerId);*/
+        signUpAddress = findViewById(R.id.signUpAddressEditTextId);*/
 
-        signUpAge = findViewById(R.id.signUpAgeEditTextId);
+        divisionSpinner = findViewById(R.id.signUpSpinnerDivision);
+        districtSpinner = findViewById(R.id.signUpSpinnerDistrict);
+
+        signUpBirthdate = findViewById(R.id.signUpBirthdateEditTextId);
+        birthdatePicker= findViewById(R.id.birthdatePickerButton);
+
+        signUpPhone = findViewById(R.id.signUpPhoneEditTextId);
         signUpGender = findViewById(R.id.signUpGenderEditTextId);
         genderSpinner = findViewById(R.id.spinnerId);
         signUpPassword = findViewById(R.id.signUpPasswordEditTextId);
@@ -81,16 +92,75 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
         /*RadioButton genderBtn = (RadioButton) findViewById(radioGroup.getCheckedRadioButtonId());
         gender = genderBtn.getText().toString();*/
 
+        birthdatePicker.setOnClickListener(this);
+        Address();
         SelectGender();
+
 
         signUp.setOnClickListener(this);
 
 
     }
 
+    @Override
+    public void onClick(View view) {
+        if(view.getId()==R.id.birthdatePickerButton) {
+            showDatePickerDialog();
+        }
+        if(view.getId()==R.id.signUpButtonId){
+            registerUser();
+        }
+    }
+
+    private void Address() {
+        // Initialize AddressMap
+        addressMap = new AddressMap();
+
+        // Set up division spinner
+        ArrayAdapter<String> divisionAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, new ArrayList<>(addressMap.getDivisionDistrictMap().keySet()));
+        divisionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        divisionSpinner.setAdapter(divisionAdapter);
+
+        // Set up district spinner
+        divisionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedDivision = divisionSpinner.getSelectedItem().toString();
+                List<String> districtList = addressMap.getDivisionDistrictMap().get(selectedDivision);
+
+                ArrayAdapter<String> districtAdapter = new ArrayAdapter<>(SignUp.this,
+                        android.R.layout.simple_spinner_item, districtList);
+                districtAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                districtSpinner.setAdapter(districtAdapter);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing
+            }
+        });
+    }
+
+    private void showDatePickerDialog() {
+        final Calendar calendar = Calendar.getInstance();
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int month = calendar.get(Calendar.MONTH);
+        int year = calendar.get(Calendar.YEAR);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(SignUp.this, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                signUpBirthdate.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
+            }
+        }, year, month, day);
+
+        datePickerDialog.show();
+    }
+
     private void SelectGender() {
 
-        members=new Members();
+        gender=new Gender();
 
         reference=firebaseDatabase.getInstance().getReference().child("Spinner");
 
@@ -131,74 +201,16 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
 
     }
 
-/*
-    private void setupSpinners() {
-        // Set up the division spinner
-        Spinner divisionSpinner = findViewById(R.id.divisionSpinnerId);
-        ArrayAdapter<CharSequence> divisionAdapter = ArrayAdapter.createFromResource(this, R.array.divisions_array, android.R.layout.simple_spinner_item);
-        divisionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        divisionSpinner.setAdapter(divisionAdapter);
 
-        // Set up the district spinner
-        Spinner districtSpinner = findViewById(R.id.districtSpinnerId);
-        ArrayAdapter<CharSequence> districtAdapter = ArrayAdapter.createFromResource(this, R.array.districts_array, android.R.layout.simple_spinner_item);
-        districtAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        districtSpinner.setAdapter(districtAdapter);
-
-        // Set up the spinner listener for division selection
-        divisionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // Get the selected division
-                String selectedDivision = parent.getItemAtPosition(position).toString();
-
-                // Update the district spinner based on the selected division
-                updateDistrictSpinner(selectedDivision);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Handle when no division is selected
-            }
-        });
-    }
-
-    private void updateDistrictSpinner(String selectedDivision) {
-        Spinner districtSpinner = findViewById(R.id.districtSpinnerId);
-        ArrayAdapter<CharSequence> districtAdapter;
-
-        // Determine the appropriate district array based on the selected division
-        if (selectedDivision.equals("Dhaka")) {
-            districtAdapter = ArrayAdapter.createFromResource(this, R.array.dhaka_districts_array, android.R.layout.simple_spinner_item);
-        } else if (selectedDivision.equals("Chittagong")) {
-            districtAdapter = ArrayAdapter.createFromResource(this, R.array.chittagong_districts_array, android.R.layout.simple_spinner_item);
-        } else if (selectedDivision.equals("Rajshahi")) {
-            districtAdapter = ArrayAdapter.createFromResource(this, R.array.rajshahi_districts_array, android.R.layout.simple_spinner_item);
-        } else {
-            // Handle any other division selection
-            districtAdapter = ArrayAdapter.createFromResource(this, R.array.default_districts_array, android.R.layout.simple_spinner_item);
-        }
-
-        districtAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        districtSpinner.setAdapter(districtAdapter);
-    }
-
-*/
-
-
-
-    @Override
-    public void onClick(View view) {
-        if(view.getId()==R.id.signUpButtonId){
-            registerUser();
-        }
-    }
 
     public void registerUser() {
         String name = signUpName.getText().toString().trim();
         String username = signUpUsername.getText().toString().trim();
         String email = signUpEmail.getText().toString().trim();
-        String age = signUpAge.getText().toString().trim();
+        String birthdate = signUpBirthdate.getText().toString().trim();
+        String division = divisionSpinner.getSelectedItem().toString().trim();
+        String district = districtSpinner.getSelectedItem().toString().trim();
+        String phone = signUpPhone.getText().toString().trim();
         String gender = signUpGender.getText().toString().trim();
         String password = signUpPassword.getText().toString().trim();
         String confirm_pass = signUpConfirmPassword.getText().toString().trim();
@@ -228,10 +240,34 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
             return;
         }
 
+        if (birthdate.isEmpty()) {
+            signUpEmail.setError("Birthdate is required.");
+            signUpEmail.requestFocus();
+            return;
+        }
+
+        if (division.isEmpty()) {
+            signUpEmail.setError("Division is required.");
+            signUpEmail.requestFocus();
+            return;
+        }
+
+        if (district.isEmpty()) {
+            signUpEmail.setError("District is required.");
+            signUpEmail.requestFocus();
+            return;
+        }
+
         // Check if the age is provided
-        if (age.isEmpty()) {
-            signUpAge.setError("Age is required.");
-            signUpAge.requestFocus();
+        if (phone.isEmpty()) {
+            signUpPhone.setError("Phone number is required.");
+            signUpPhone.requestFocus();
+            return;
+        }
+
+        if (phone.length()<11 && !phone.startsWith("01")) {
+            signUpPhone.setError("Enter valid password!!");
+            signUpPhone.requestFocus();
             return;
         }
 
@@ -302,7 +338,10 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
         String name = signUpName.getText().toString().trim();
         String username = signUpUsername.getText().toString().trim();
         String email = signUpEmail.getText().toString().trim();
-        String age = signUpAge.getText().toString().trim();
+        String birthdate = signUpBirthdate.getText().toString().trim();
+        String division = divisionSpinner.getSelectedItem().toString().trim();
+        String district = districtSpinner.getSelectedItem().toString().trim();
+        String phone = signUpPhone.getText().toString().trim();
         String gender = signUpGender.getText().toString().trim();
         String password = signUpPassword.getText().toString().trim();
 
@@ -315,7 +354,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
-                                        User user = new User(name, username, email, age, gender);
+                                        User user = new User(name, username, email, birthdate, division, district, phone, gender);
 
                                         FirebaseDatabase.getInstance().getReference("Users")
                                                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
@@ -325,7 +364,7 @@ public class SignUp extends AppCompatActivity implements View.OnClickListener {
                                                     public void onComplete(@NonNull Task<Void> task) {
                                                         if (task.isSuccessful()) {
                                                             Toast.makeText(SignUp.this, "Registration completed. Please verify email address.", Toast.LENGTH_SHORT).show();
-                                                            Intent intent = new Intent(SignUp.this, LogIn.class);
+                                                            Intent intent = new Intent(SignUp.this, AppFeatures.class);
                                                             startActivity(intent);
                                                         } else {
                                                             Toast.makeText(SignUp.this, "Registration failed. Please try again.", Toast.LENGTH_SHORT).show();

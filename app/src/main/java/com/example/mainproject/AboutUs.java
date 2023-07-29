@@ -60,7 +60,7 @@ public class AboutUs extends AppCompatActivity {
 
                     }
 
-                    Toast.makeText(AboutUs.this, "page:"+(i+1), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(AboutUs.this, "page:"+(i+1), Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -85,7 +85,7 @@ public class AboutUs extends AppCompatActivity {
                         nextBtn.setEnabled(true);
 
                     }
-                    Toast.makeText(AboutUs.this, "page:"+(i+1), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(AboutUs.this, "page:"+(i+1), Toast.LENGTH_SHORT).show();
                 }
 
             }

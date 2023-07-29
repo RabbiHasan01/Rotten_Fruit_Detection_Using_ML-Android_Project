@@ -16,6 +16,12 @@
 
         />
     <item
+        android:id="@+id/restApiId"
+        android:title="Rest Api"
+        app:showAsAction="never"
+
+        />
+    <item
         android:id="@+id/likeId"
         android:title="Like"
         app:showAsAction="never"

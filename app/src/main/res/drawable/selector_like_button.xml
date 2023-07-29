@@ -2,10 +2,10 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true">
         <bitmap
-            android:src="@drawable/like_img"
+            android:src="@drawable/liked_btn"
             android:tint="@color/like_button_pressed_color"/>
     </item>
     <item>
-        <bitmap android:src="@drawable/dislike_img"/>
+        <bitmap android:src="@drawable/dislike_btn"/>
     </item>
 </selector>

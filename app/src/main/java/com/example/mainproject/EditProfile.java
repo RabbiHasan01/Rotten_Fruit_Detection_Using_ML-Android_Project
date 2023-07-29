@@ -3,6 +3,8 @@
 package com.example.mainproject;
 
 
+import static android.os.Environment.getExternalStorageDirectory;
+
 import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -25,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -76,9 +79,12 @@ import android.os.Build;
 import android.os.Environment;
 
 */
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -91,10 +97,12 @@ public class EditProfile extends AppCompatActivity {
     private StorageReference mStorage;
 
     private ImageView profileImageView;
-    private TextView nameTextView, usernameTextView, emailTextView, ageTextView, genderTextView;
+    private TextView nameTextView, usernameTextView, emailTextView, phoneTextView, genderTextView;
     private Button chooseImageButton, saveButton, downloadButton;
 
     private Uri imageUri;
+
+    private static final int SAVE_PDF_REQUEST_CODE = 123; // Any unique request code
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -114,7 +122,7 @@ public class EditProfile extends AppCompatActivity {
         nameTextView = findViewById(R.id.nameTextView);
         usernameTextView = findViewById(R.id.usernameTextView);
         emailTextView = findViewById(R.id.emailTextView);
-        ageTextView = findViewById(R.id.ageTextView);
+        phoneTextView = findViewById(R.id.phoneTextView);
         genderTextView = findViewById(R.id.genderTextView);
         chooseImageButton = findViewById(R.id.chooseImageButton);
         saveButton = findViewById(R.id.saveButton);
@@ -185,10 +193,10 @@ public class EditProfile extends AppCompatActivity {
                                             String name = nameTextView.getText().toString().trim();
                                             String username = usernameTextView.getText().toString().trim();
                                             String email = emailTextView.getText().toString().trim();
-                                            String age = ageTextView.getText().toString().trim();
+                                            String phone = phoneTextView.getText().toString().trim();
                                             String gender = genderTextView.getText().toString().trim();
 
-                                            User user1= new User(name, username,email, age, gender);
+                                            User user1= new User(name, username,email,null, null,null, phone, gender); //birthdate+div+dis include hbe
 
                                             Users updatedUser = new Users( user1 ,uri.toString());
 
@@ -223,10 +231,10 @@ public class EditProfile extends AppCompatActivity {
                 String name = nameTextView.getText().toString().trim();
                 String username = usernameTextView.getText().toString().trim();
                 String email = emailTextView.getText().toString().trim();
-                String age = ageTextView.getText().toString().trim();
+                String phone = phoneTextView.getText().toString().trim();
                 String gender = genderTextView.getText().toString().trim();
 
-                User user1= new User(name, username,email, age, gender);
+                User user1= new User(name, username,email,null,null,null, phone, gender); //birthdate+div+dist lagbe
 
                 Users updatedUser = new Users( user1, null);
 
@@ -249,212 +257,156 @@ public class EditProfile extends AppCompatActivity {
             Toast.makeText(EditProfile.this, "User not logged in", Toast.LENGTH_SHORT).show();
         }
     }
-/*
-    private void createAndSaveProfileAsPDF() {
-        String name = nameTextView.getText().toString();
-        String username = usernameTextView.getText().toString();
-        String email = emailTextView.getText().toString();
-        String age = ageTextView.getText().toString();
-        String gender = genderTextView.getText().toString();
-
-        String filePath = Environment.getExternalStorageDirectory().getPath() + "/ProfilePDFs/Profile.pdf";
-        com.itextpdf.text.Document document = new com.itextpdf.text.Document();
-
-        try {
-            PdfWriter.getInstance(document, new FileOutputStream(filePath));
-            document.open();
-
-            com.itextpdf.text.Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 24);
-            com.itextpdf.text.Font contentFont = FontFactory.getFont(FontFactory.HELVETICA, 16);
-
-            // Add profile information to the document
-            Paragraph title = new Paragraph("Profile Information", titleFont);
-            title.setAlignment(Element.ALIGN_CENTER);
-            document.add(title);
-
-            document.add(new Paragraph("Name: " + name, contentFont));
-            document.add(new Paragraph("Username: " + username, contentFont));
-            document.add(new Paragraph("Email: " + email, contentFont));
-            document.add(new Paragraph("Age: " + age, contentFont));
-            document.add(new Paragraph("Gender: " + gender, contentFont));
-
-            Toast.makeText(EditProfile.this, "Profile downloaded as PDF", Toast.LENGTH_SHORT).show();
-        } catch (DocumentException | FileNotFoundException e) {
-            e.printStackTrace();
-            Toast.makeText(EditProfile.this, "Failed to download profile as PDF", Toast.LENGTH_SHORT).show();
-        } finally {
-            if (document != null) {
-                document.close();
-            }
-        }
-    }
-*/
-
-   /*
-    private void createAndSaveProfileAsPDF() {
 
 
-
-        downloadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                String name = nameTextView.getText().toString();
-                String username = usernameTextView.getText().toString();
-                String email = emailTextView.getText().toString();
-                String age = ageTextView.getText().toString();
-                String gender = genderTextView.getText().toString();
-
-                User user1= new User(name, username,email, age, gender);
-
-                Users updatedUser = new Users( user1, null);
-
-                mAuth = FirebaseAuth.getInstance();
-                mDatabase = FirebaseDatabase.getInstance().getReference("Users");
-
-                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                String userId = currentUser.getUid();
-                mDatabase.child(userId).setValue(updatedUser);
-
-                mDatabase.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        printPDF();
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-
-
-
-            }
-        });
-
-
-
-        /*
-        //com.itextpdf.text.Document document = new com.itextpdf.text.Document();
+    private void printPDF() {
+        PdfDocument pdfDocument = new PdfDocument();
+        Paint paint = new Paint();
+        Paint forLinePaint = new Paint();
         PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create(); // A4 size: 595x842 pixels
-        //PdfDocument.Page page = document.startPage(pageInfo);
+        PdfDocument.Page page = pdfDocument.startPage(pageInfo);
 
         // Create a canvas for drawing the profile information
         Canvas canvas = page.getCanvas();
-        Paint paint = new Paint();
-        paint.setColor(Color.BLACK);
         paint.setTextSize(20);
+        paint.setColor(Color.rgb(0, 50, 250));
+
+        canvas.drawText("Fruit Detection", 20, 20, paint);
+        paint.setTextSize(8.5f);
+
+        canvas.drawText("University of Chittagong", 20, 40, paint);
+        canvas.drawText("Chittagong-4015", 20, 55, paint);
+
+        forLinePaint.setStyle(Paint.Style.STROKE);
+        forLinePaint.setPathEffect(new DashPathEffect(new float[]{5, 5}, 0));
+        forLinePaint.setStrokeWidth(2);
+        canvas.drawLine(20, 65, 575, 65, forLinePaint); // Adjusted the line length to cover the entire page
 
         // Draw the profile information on the canvas
         String name = nameTextView.getText().toString();
         String username = usernameTextView.getText().toString();
         String email = emailTextView.getText().toString();
-        String age = ageTextView.getText().toString();
+        String phone = phoneTextView.getText().toString();
         String gender = genderTextView.getText().toString();
 
-        int x = 50; // x-coordinate
-        int y = 100; // y-coordinate
-        int lineHeight = 30;
+        int x = 20; // x-coordinate
+        int y = 80; // y-coordinate
+        int lineHeight = 20; // Adjust the line height for each text
 
         canvas.drawText("Name: " + name, x, y, paint);
-        canvas.drawText("Username: " + username, x, y + lineHeight, paint);
-        canvas.drawText("Email: " + email, x, y + 2 * lineHeight, paint);
-        canvas.drawText("Age: " + age, x, y + 3 * lineHeight, paint);
-        canvas.drawText("Gender: " + gender, x, y + 4 * lineHeight, paint);
+        y += lineHeight;
+        canvas.drawText("Username: " + username, x, y, paint);
+        y += lineHeight;
+        canvas.drawText("Email: " + email, x, y, paint);
+        y += lineHeight;
+        canvas.drawText("Age: " + phone, x, y, paint);
+        y += lineHeight;
+        canvas.drawText("Gender: " + gender, x, y, paint);
 
-        document.finishPage(page);
+        y += 20; // Add some spacing
 
-        // Define the file path for saving the PDF
-        String directoryPath = Environment.getExternalStorageDirectory().getPath() + "/ProfilePDFs";
-        File directory = new File(directoryPath);
+        canvas.drawLine(20, y, 575, y, forLinePaint); // Draw a horizontal line below the profile information
+
+        y += 20; // Add some spacing
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm a");
+        canvas.drawText("Date: " + simpleDateFormat.format(new Date().getTime()), 20, y, paint);
+
+        y += 40; // Add some spacing
+
+        paint.setTextAlign(Paint.Align.CENTER);
+        paint.setTextSize(12f);
+        canvas.drawText("Thank You!", canvas.getWidth() / 2, y, paint);
+
+        pdfDocument.finishPage(page);
+
+        File directory = new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "FruitDetection");
+
         if (!directory.exists()) {
             directory.mkdirs();
         }
-        String filePath = directoryPath + "/Profile.pdf";
-        File file = new File(filePath);
+
+        File file = new File(directory, "profile.pdf");
 
         try {
-            document.writeTo(new FileOutputStream(file));
-            Toast.makeText(EditProfile.this, "Profile downloaded as PDF", Toast.LENGTH_SHORT).show();
+            pdfDocument.writeTo(new FileOutputStream(file));
+            pdfDocument.close();
+            Toast.makeText(EditProfile.this, "profile downloaded as pdf", Toast.LENGTH_SHORT).show();
+
+            // Use SAF to let the user save the PDF file in their desired location
+            Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            intent.setType("application/pdf");
+            intent.putExtra(Intent.EXTRA_TITLE, "profile.pdf");
+            startActivityForResult(intent, SAVE_PDF_REQUEST_CODE); // 123,any num
         } catch (IOException e) {
             e.printStackTrace();
-            Toast.makeText(EditProfile.this, "Failed to download profile as PDF", Toast.LENGTH_SHORT).show();
+            Toast.makeText(EditProfile.this, "failed to download as pdf", Toast.LENGTH_SHORT).show();
         }
+    }
 
-        document.close();
-        *
+    /*private void printPDF2() {
 
-    }*/
-
-
-    private void printPDF() {
-
-        downloadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                PdfDocument pdfDocument = new PdfDocument();
-                Paint paint = new Paint();
-                Paint forLinePaint = new Paint();
-                PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create(); // A4 size: 595x842 pixels
-                PdfDocument.Page page = pdfDocument.startPage(pageInfo);
+        PdfDocument pdfDocument = new PdfDocument();
+        Paint paint = new Paint();
+        Paint forLinePaint = new Paint();
+        PdfDocument.PageInfo pageInfo = new PdfDocument.PageInfo.Builder(595, 842, 1).create(); // A4 size: 595x842 pixels
+        PdfDocument.Page page = pdfDocument.startPage(pageInfo);
 
 
-                // Create a canvas for drawing the profile information
-                Canvas canvas = page.getCanvas();
-                paint.setTextSize(20);
+        // Create a canvas for drawing the profile information
+        Canvas canvas = page.getCanvas();
+        paint.setTextSize(20);
 
-                paint.setColor(Color.rgb(0, 50, 250));
+        paint.setColor(Color.rgb(0, 50, 250));
 
-                canvas.drawText("Fruit Detection", 20, 20, paint);
-                paint.setTextSize(8.5f);
+        canvas.drawText("Fruit Detection", 20, 20, paint);
+        paint.setTextSize(8.5f);
 
-                canvas.drawText("University of Chittagong", 20, 40, paint);
-                canvas.drawText("Chittagong-4015", 20, 55, paint);
+        canvas.drawText("University of Chittagong", 20, 40, paint);
+        canvas.drawText("Chittagong-4015", 20, 55, paint);
 
-                forLinePaint.setStyle(Paint.Style.STROKE);
-                forLinePaint.setPathEffect(new DashPathEffect(new float[]{5, 5}, 0));
-                forLinePaint.setStrokeWidth(2);
-                canvas.drawLine(20, 65, 230, 65, forLinePaint);
-
-
-                // Draw the profile information on the canvas
-                String name = nameTextView.getText().toString();
-                String username = usernameTextView.getText().toString();
-                String email = emailTextView.getText().toString();
-                String age = ageTextView.getText().toString();
-                String gender = genderTextView.getText().toString();
-
-                int x = 20; // x-coordinate
-                int y = 80; // y-coordinate
-
-                canvas.drawText("Name: " + name, x, y, paint);
-                canvas.drawText("Username: " + username, x, y, paint);
-                canvas.drawText("Email: " + email, x, y, paint);
-                canvas.drawText("Age: " + age, x, y, paint);
-                canvas.drawText("Gender: " + gender, x, y, paint);
-
-                canvas.drawLine(20, 65, 230, 65, forLinePaint);
-
-                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm a");
-
-                canvas.drawText("date: " + simpleDateFormat.format(new Date().getTime()), 20, 260, paint);
-
-                paint.setTextAlign(Paint.Align.CENTER);
-                paint.setTextSize(12f);
-
-                canvas.drawText("Thank You!", canvas.getHeight() / 2, 320, paint);
-
-                pdfDocument.finishPage(page);
+        forLinePaint.setStyle(Paint.Style.STROKE);
+        forLinePaint.setPathEffect(new DashPathEffect(new float[]{5, 5}, 0));
+        forLinePaint.setStrokeWidth(2);
+        canvas.drawLine(20, 65, 230, 65, forLinePaint);
 
 
+        // Draw the profile information on the canvas
+        String name = nameTextView.getText().toString();
+        String username = usernameTextView.getText().toString();
+        String email = emailTextView.getText().toString();
+        String phone = phoneTextView.getText().toString();
+        String gender = genderTextView.getText().toString();
 
-                String filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/profile.pdf";
+        int x = 20; // x-coordinate
+        int y = 80; // y-coordinate
+
+        canvas.drawText("Name: " + name, x, y, paint);
+        canvas.drawText("Username: " + username, x, y, paint);
+        canvas.drawText("Email: " + email, x, y, paint);
+        canvas.drawText("Age: " + phone, x, y, paint);
+        canvas.drawText("Gender: " + gender, x, y, paint);
+
+        canvas.drawLine(20, 65, 230, 65, forLinePaint);
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm a");
+
+        canvas.drawText("date: " + simpleDateFormat.format(new Date().getTime()), 20, 260, paint);
+
+        paint.setTextAlign(Paint.Align.CENTER);
+        paint.setTextSize(12f);
+
+        canvas.drawText("Thank You!", canvas.getHeight() / 2, 320, paint);
+
+        pdfDocument.finishPage(page);
 
 
-                // Create a File object
-                File file = new File(filePath);
+        String filePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/profile.pdf";
+
+
+        // Create a File object
+        File file = new File(filePath);*/
 
 
                 /*try {
@@ -468,11 +420,11 @@ public class EditProfile extends AppCompatActivity {
 
 
                     // Create a File object
-                    File file = new File(filePath);*/
+                    File file = new File(filePath);*
 
 
                     try {
-                        // Create a FileOutputStream to write the PDF data to the file
+                        / Create a FileOutputStream to write the PDF data to the file
                         FileOutputStream fos = new FileOutputStream(file);
 
 
@@ -507,11 +459,11 @@ public class EditProfile extends AppCompatActivity {
                     e.printStackTrace();
                     // Show a Toast message indicating that the PDF download failed
                     Toast.makeText(EditProfile.this, "Failed to download PDF", Toast.LENGTH_SHORT).show();
-                }*/
+                }*
 
 
                     // Close the PdfDocument
-                    pdfDocument.close();
+                    //pdfDocument.close();
 
 
 
@@ -535,11 +487,8 @@ public class EditProfile extends AppCompatActivity {
                     //throw new RuntimeException(e);
                     e.printStackTrace();
                     Toast.makeText(EditProfile.this, "failed to download as pdf", Toast.LENGTH_SHORT).show();
-                }*/
-            }
-
-        });
-    }
+                }*
+    }*/
 
    /* @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -547,55 +496,8 @@ public class EditProfile extends AppCompatActivity {
         if (requestCode == 1 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             createAndSaveProfileAsPDF();
         }
-    }*/
-
-
-    /*
-    private void generatePDF() {
-        // Define the path and file name for the PDF file
-        String filePath = Environment.getExternalStorageDirectory().toString() + "/profile.pdf";
-
-        try {
-            // Create a new instance of PdfWriter class
-            PdfWriter writer = new PdfWriter(filePath);
-
-            // Create a new PDF document
-            PdfDocument pdfDocument = new PdfDocument(writer);
-            Document document = new Document(pdfDocument);
-
-            // Open the document for writing
-            document.open();
-
-            document.add(new Paragraph("Name: " + nameTextView.getText().toString()));
-            document.add(new Paragraph("Username: " + usernameTextView.getText().toString()));
-            document.add(new Paragraph("Email: " + emailTextView.getText().toString()));
-            document.add(new Paragraph("Age: " + ageTextView.getText().toString()));
-            document.add(new Paragraph("Gender: " + genderTextView.getText().toString()));
-
-            // Close the document
-            document.close();
-
-            // Show a toast message indicating successful PDF generation
-            Toast.makeText(this, "PDF generated successfully", Toast.LENGTH_SHORT).show();
-
-            // Open the PDF file using a PDF viewer app
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.fromFile(new File(filePath)), "application/pdf");
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            Intent newIntent = Intent.createChooser(intent, "Open File");
-            try {
-                startActivity(newIntent);
-            } catch (ActivityNotFoundException e) {
-                // Show a toast message if no PDF viewer app is installed
-                Toast.makeText(this, "No PDF viewer app found", Toast.LENGTH_SHORT).show();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            // Show a toast message indicating failure in PDF generation
-            Toast.makeText(this, "Failed to generate PDF", Toast.LENGTH_SHORT).show();
-        }
     }
-*/
+    }*/
 
     private void loadProfileData() {
         FirebaseUser user = mAuth.getCurrentUser();
@@ -611,7 +513,7 @@ public class EditProfile extends AppCompatActivity {
                             nameTextView.setText(userProfile.getName());
                             usernameTextView.setText(userProfile.getUsername());
                             emailTextView.setText(userProfile.getEmail());
-                            ageTextView.setText( userProfile.getAge());
+                            phoneTextView.setText(userProfile.getPhone());
                             genderTextView.setText(userProfile.getGender());
 
                             if (userProfile.getProfileImageURL() != null) {
@@ -635,13 +537,14 @@ public class EditProfile extends AppCompatActivity {
         }
     }
 
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            // Your existing code for handling the image selection
             imageUri = data.getData();
-
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
                 profileImageView.setImageBitmap(bitmap);
@@ -649,7 +552,35 @@ public class EditProfile extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+        if (requestCode == SAVE_PDF_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            // Code for handling the result of the PDF save using SAF
+            Uri uri = data.getData();
+            try {
+                File directory = new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "FruitDetection");
+                if (!directory.exists()) {
+                    directory.mkdirs();
+                }
+                File file = new File(directory, "profile.pdf");
+
+                OutputStream outputStream = getContentResolver().openOutputStream(uri);
+                if (outputStream != null) {
+                    FileInputStream fileInputStream = new FileInputStream(file);
+                    byte[] buffer = new byte[1024];
+                    int length;
+                    while ((length = fileInputStream.read(buffer)) > 0) {
+                        outputStream.write(buffer, 0, length);
+                    }
+                    outputStream.close();
+                    fileInputStream.close();
+                    Toast.makeText(EditProfile.this, "PDF saved successfully!", Toast.LENGTH_SHORT).show();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(EditProfile.this, "Failed to save PDF!", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
+
 
     @Override
     public boolean onSupportNavigateUp() {

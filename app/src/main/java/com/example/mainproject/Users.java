@@ -4,7 +4,7 @@ public class Users {
     private String name;
     private String username;
     private String email;
-    private String age;
+    private String phone;
     private String gender;
     private String profileImageURL;
 
@@ -16,7 +16,7 @@ public class Users {
         this.name = user.getName();
         this.username = user.getUsername();
         this.email = user.getEmail();
-        this.age = user.getAge();
+        this.phone = user.getPhone();
         this.gender = user.getGender();
         this.profileImageURL = profileImageURL;
     }
@@ -32,8 +32,8 @@ public class Users {
         return email;
     }
 
-    public String getAge() {
-        return age;
+    public String getPhone() {
+        return phone;
     }
 
     public String getGender() {

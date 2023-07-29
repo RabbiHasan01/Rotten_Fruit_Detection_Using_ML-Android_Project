@@ -160,6 +160,11 @@ import java.util.Locale;
          getSupportActionBar().setTitle("Fruit Detection");
          getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+         // Get the postId from the intent or any other way you pass it from the previous activity.
+         String postId = getIntent().getStringExtra("postId");
+
+
+
          commentEditText = findViewById(R.id.commentEditText);
          postButton = findViewById(R.id.postButton);
          commentsRecyclerView = findViewById(R.id.commentsRecyclerView);
